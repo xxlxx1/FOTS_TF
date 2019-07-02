@@ -741,7 +741,7 @@ def get_project_matrix_and_width(text_polyses, text_tags, target_height=8.0):
 
         # src_pts = np.float32([(x1, y1), (x2, y2),(x3, y3), (x4, y4)])
         # dst_pts = np.float32([(mapped_x1, mapped_y1), (mapped_x2, mapped_y2), (mapped_x3, mapped_y3), (mapped_x4, mapped_y4)])
-	src_pts = np.float32([(x1, y1), (x2, y2), (x4, y4)])
+    src_pts = np.float32([(x1, y1), (x2, y2), (x4, y4)])
     dst_pts = np.float32([(mapped_x1, mapped_y1), (mapped_x2, mapped_y2), (mapped_x4, mapped_y4)])
     # project_matrix = cv2.getPerspectiveTransform(dst_pts.astype(np.float32), src_pts.astype(np.float32))
     # project_matrix = project_matrix.flatten()[:8]
