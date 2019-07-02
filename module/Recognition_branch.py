@@ -67,7 +67,7 @@ class Recognition(object):
 		num_rois = tf.shape(rois)[0]
 
 		cnn_feature = self.cnn(rois) # N * 1 * W * C
-		print cnn_feature
+		print( cnn_feature )
 
 		# cnn_feature = tf.reshape(cnn_feature, [nums, -1, 256]) # squeeze B x W x C
 		cnn_feature = tf.squeeze(cnn_feature, axis=1) # N * W * C

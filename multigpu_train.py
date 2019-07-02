@@ -113,12 +113,12 @@ def main(argv=None):
 
     if FLAGS.pretrained_model_path is not None:
         if os.path.isdir(FLAGS.pretrained_model_path):
-            print "Restore pretrained model from other datasets"
+            print("Restore pretrained model from other datasets")
             ckpt = tf.train.latest_checkpoint(FLAGS.pretrained_model_path)
             variable_restore_op = slim.assign_from_checkpoint_fn(ckpt, slim.get_trainable_variables(),
                                                              ignore_missing_vars=True)
         else: # is *.ckpt
-            print "Restore pretrained model from imagenet"
+            print("Restore pretrained model from imagenet")
             variable_restore_op = slim.assign_from_checkpoint_fn(FLAGS.pretrained_model_path, slim.get_trainable_variables(),
                                                              ignore_missing_vars=True)
         # ckpt = tf.train.latest_checkpoint(FLAGS.pretrained_model_path)

@@ -394,3 +394,5 @@ def main(argv=None):
 
 if __name__ == '__main__':
     tf.app.run()
+
+# python eval.py --gpu_list=7 --test_data_path=/data/xlxia/dataset/detect_img/fix_data/test/all/ --checkpoint_path=checkpoints/ --output_dir=output/

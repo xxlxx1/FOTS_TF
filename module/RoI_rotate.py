@@ -68,7 +68,7 @@ class RoIRotate(object):
 
 			pad_rois = tf.image.pad_to_bounding_box(rois, 0, 0, 8, max_width)
 
-			print "pad_rois: ", pad_rois
+			print("pad_rois: ", pad_rois)
 
 			return pad_rois
 
@@ -118,7 +118,7 @@ class RoIRotate(object):
 			pad_rois, _ = tf.while_loop(cond, body, loop_vars=[pad_rois, i])
 			pad_rois = pad_rois.stack()
 
-			print "pad_rois shape: ", pad_rois
+			print("pad_rois shape: ", pad_rois)
 
 			return pad_rois
 
@@ -149,7 +149,7 @@ class RoIRotate(object):
 				map_shape = tf.shape(_feature_map)
 				map_shape = tf.to_float(map_shape)
 				# _feature_map = feature_map[i]
-				print box_widths
+				print(box_widths)
 				width_box = box_widths[i]
 				width_box = tf.cast(width_box, tf.float32)
 
@@ -266,7 +266,7 @@ def check_RoIRotate(RR):
 	data = dummy_input()
 	for i in range(6):
 		if i != 4:
-			print data[i].shape
+			print(data[i].shape)
 
 	with tf.Session() as sess:
 		inp_dict = {input_feature_map: data[0], input_feature_height: data[1], input_feature_width: data[2], input_transform_matrix: data[3], input_box_widths: data[5]}

@@ -989,9 +989,9 @@ if __name__ == '__main__':
     data_generator = get_batch(num_workers=1, input_size=512, batch_size=1)
     data = next(data_generator)
     img = data[0][0]
-    print "Text in the crop: "
+    print("Text in the crop: ")
     for label in data[-2]:
-        print ground_truth_to_word(label)
+        print(ground_truth_to_word(label))
     """
     img_copy = img.copy()
     for i in range(len(data[-1])):
