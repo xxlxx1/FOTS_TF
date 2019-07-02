@@ -1,0 +1,11 @@
+*pb_model
+*.jpg
+*log
+*data
+*__pycache__
+*.idea
+*.txt
+*.png
+*ckpt*
+*events*
+

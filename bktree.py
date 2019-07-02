@@ -14,8 +14,6 @@ Licensed under the PSF license: http://www.python.org/psf/license/
 - Adam Hupp <adam@hupp.org>
 
 """
-from itertools import imap, ifilter
-
 
 class BKTree:
     def __init__(self, distfn, words):
@@ -99,16 +97,14 @@ def brute_query(word, words, distfn, n):
     n: an integer that specifies the distance of a matching word
     
     """
-    return [i for i in words
-            if distfn(i, word) <= n]
-
+    return [i for i in words if distfn(i, word) <= n]
 
 def maxdepth(tree, count=0):
-    _, children = t
+    _, children = tree
     if len(children):
-        return max(maxdepth(i, c+1) for i in children.values())
+        return max(maxdepth(i, count+1) for i in children.values())
     else:
-        return c
+        return count
 
 
 # http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance#Python
@@ -130,26 +126,20 @@ def levenshtein(s, t):
 
 def dict_words(dictfile="/usr/share/dict/american-english"):
     "Return an iterator that produces words in the given dictionary."
-    return ifilter(len,
-                   imap(str.strip,
-                        open(dictfile)))
-
+    return filter(len, map(str.strip,open(dictfile)))
 
 def timeof(fn, *args):
     import time
     t = time.time()
     res = fn(*args)
-    print "time: ", (time.time() - t)
+    print("time: ", (time.time() - t))
     return res
-
 
 
 if __name__ == "__main__":
 
-    tree = BKTree(levenshtein,
-                  dict_words('/usr/share/dict/american-english-large'))
-
-    print tree.query("ricoshet", 2)
+    tree = BKTree(levenshtein, dict_words('/usr/share/dict/american-english-large'))
+    print(tree.query("ricoshet", 2))
     
 #     dist = 1
 #     for i in ["book", "cat", "backlash", "scandal"]:

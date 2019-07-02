@@ -342,7 +342,7 @@ def main(argv=None):
                     # for pred in recog_decode:
                        # print ground_truth_to_word(pred)
                     if recog_decode.shape[0] != boxes.shape[0]:
-                        print "detection and recognition result are not equal!"
+                        print("detection and recognition result are not equal!")
                         exit(-1)
 
                     with open(res_file, 'w') as f:
@@ -358,13 +358,11 @@ def main(argv=None):
                                     recognition_result = fix_result[0][1]
 			     
                             f.write('{},{},{},{},{},{},{},{},{}\r\n'.format(
-                                box[0, 0], box[0, 1], box[1, 0], box[1, 1], box[2, 0], box[2, 1], box[3, 0], box[3, 1], recognition_result
-                            ))
-			    """
-                            f.write('{},{},{},{},{},{},{},{}\r\n'.format(
-                                box[0, 0], box[0, 1], box[1, 0], box[1, 1], box[2, 0], box[2, 1], box[3, 0], box[3, 1]
-                            ))
-			    """ 
+                                box[0, 0], box[0, 1], box[1, 0], box[1, 1], box[2, 0], box[2, 1], box[3, 0], box[3, 1], recognition_result))
+
+                            # f.write('{},{},{},{},{},{},{},{}\r\n'.format(
+                            #     box[0, 0], box[0, 1], box[1, 0], box[1, 1], box[2, 0], box[2, 1], box[3, 0], box[3, 1]
+                            # ))
                             # Draw bounding box
                             cv2.polylines(im[:, :, ::-1], [box.astype(np.int32).reshape((-1, 1, 2))], True, color=(255, 255, 0), thickness=1)
                             # Draw recognition results area
