@@ -34,7 +34,7 @@ class BKTree:
         self.distfn = distfn
 
         it = iter(words)
-        root = it.next()
+        root = next(it)
         self.tree = (root, {})
 
         for i in it:
