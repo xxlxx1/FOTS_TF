@@ -20,8 +20,7 @@ import config
 # tf.app.flags.DEFINE_string('training_data_path', '/data2/data/15ICDAR/ch4_training_images/', 'training dataset to use')
 tf.app.flags.DEFINE_string('training_data_path', '/home/qz/data/ICDAR15/ch4_training_images/', 'training dataset to use')
 # tf.app.flags.DEFINE_string('training_data_path', 'training_samples/', '')
-tf.app.flags.DEFINE_integer('max_image_large_side', 1280,
-                            'max image size of training')
+tf.app.flags.DEFINE_integer('max_image_large_side', 1280, 'max image size of training')
 tf.app.flags.DEFINE_integer('max_text_size', 800,
                             'if the text in the input image is bigger than this, then we resize'
                             'the image according to this')
@@ -30,9 +29,7 @@ tf.app.flags.DEFINE_integer('min_text_size', 10,
 tf.app.flags.DEFINE_float('min_crop_side_ratio', 0.1,
                           'when doing random crop from input image, the'
                           'min length of min(H, W')
-tf.app.flags.DEFINE_string('geometry', 'RBOX',
-                           'which geometry to generate, RBOX or QUAD')
-
+tf.app.flags.DEFINE_string('geometry', 'RBOX', 'which geometry to generate, RBOX or QUAD')
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -81,35 +78,6 @@ def sparse_tuple_from(sequences, dtype=np.int32):
 
     return indices, values, shape
 
-"""
-def load_annoataion(p):
-    '''
-    load annotation from the text file
-    :param p:
-    :return:
-    '''
-    text_polys = []
-    text_tags = []
-    labels = []
-    if not os.path.exists(p):
-        return np.array(text_polys, dtype=np.float32)
-    with open(p, 'r') as f:
-        reader = csv.reader(f)
-        for line in reader:
-            label = line[-1]
-            # strip BOM. \ufeff for python3,  \xef\xbb\bf for python2
-            line = [i.strip('\ufeff').strip('\xef\xbb\xbf') for i in line]
-
-            x1, y1, x2, y2, x3, y3, x4, y4 = list(map(float, line[:8]))
-            text_polys.append([[x1, y1], [x2, y2], [x3, y3], [x4, y4]])
-            if label == '*' or label == '###' or label == '':
-                text_tags.append(True)
-                labels.append([-1])
-            else:
-                labels.append(label_to_array(label))
-                text_tags.append(False)
-        return np.array(text_polys, dtype=np.float32), np.array(text_tags, dtype=np.bool), labels
-"""
 def load_annoataion(p):
     '''
     load annotation from the text file
@@ -125,9 +93,9 @@ def load_annoataion(p):
     with open(p, 'r') as f:
         for line in f.readlines():
             # strip BOM. \ufeff for python3,  \xef\xbb\bf for python2
-            # line = [i.strip('\ufeff').strip('\xef\xbb\xbf') for i in line]
-            line = line.replace('\xef\xbb\bf', '')
-            line = line.replace('\xe2\x80\x8d', '')
+            line = [i.strip('\ufeff').strip('\xef\xbb\xbf') for i in line]
+            # line = line.replace('\xef\xbb\bf', '')
+            # line = line.replace('\xe2\x80\x8d', '')
             line = line.strip()
             line = line.split(',')
             if len(line) > 9:
@@ -148,6 +116,7 @@ def load_annoataion(p):
                 labels.append(label_to_array(label))
                 text_tags.append(False)
         return np.array(text_polys, dtype=np.float32), np.array(text_tags, dtype=np.bool), labels
+
 def polygon_area(poly):
     '''
     compute area of a polygon
@@ -773,13 +742,13 @@ def get_project_matrix_and_width(text_polyses, text_tags, target_height=8.0):
         # src_pts = np.float32([(x1, y1), (x2, y2),(x3, y3), (x4, y4)])
         # dst_pts = np.float32([(mapped_x1, mapped_y1), (mapped_x2, mapped_y2), (mapped_x3, mapped_y3), (mapped_x4, mapped_y4)])
 	src_pts = np.float32([(x1, y1), (x2, y2), (x4, y4)])
-	dst_pts = np.float32([(mapped_x1, mapped_y1), (mapped_x2, mapped_y2), (mapped_x4, mapped_y4)])
-        # project_matrix = cv2.getPerspectiveTransform(dst_pts.astype(np.float32), src_pts.astype(np.float32))
-        # project_matrix = project_matrix.flatten()[:8]
-	affine_matrix = cv2.getAffineTransform(dst_pts.astype(np.float32), src_pts.astype(np.float32))
-	affine_matrix = affine_matrix.flatten()
-        project_matrixes.append(affine_matrix)
-        box_widths.append(width_box)
+    dst_pts = np.float32([(mapped_x1, mapped_y1), (mapped_x2, mapped_y2), (mapped_x4, mapped_y4)])
+    # project_matrix = cv2.getPerspectiveTransform(dst_pts.astype(np.float32), src_pts.astype(np.float32))
+    # project_matrix = project_matrix.flatten()[:8]
+    affine_matrix = cv2.getAffineTransform(dst_pts.astype(np.float32), src_pts.astype(np.float32))
+    affine_matrix = affine_matrix.flatten()
+    project_matrixes.append(affine_matrix)
+    box_widths.append(width_box)
         # filter_box_masks.append(box_masks[i])
 
     project_matrixes = np.array(project_matrixes)
