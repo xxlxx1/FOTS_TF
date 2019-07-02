@@ -8,7 +8,7 @@ import math
 import config
 import os
 
-from stn import spatial_transformer_network as transformer
+from .stn import spatial_transformer_network as transformer
 
 class RoIRotate(object):
 	def __init__(self, height=8):
