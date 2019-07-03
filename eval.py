@@ -234,7 +234,7 @@ def main(argv=None):
                     print("input_roi_boxes shape:", input_roi_boxes.shape)  # shape：框的个数 * 8
 
                     transform_matrixes, box_widths = get_project_matrix_and_width(input_roi_boxes)
-                    print("max box width", box_widths)
+                    # print("max box width", box_widths)
 
                     # 识别
                     rec_start = time.time()
