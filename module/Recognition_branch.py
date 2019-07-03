@@ -1,8 +1,6 @@
 import tensorflow as tf
 from tensorflow.contrib import slim, rnn
-import numpy as np
 import config
-import os
 
 
 class Recognition(object):
@@ -32,7 +30,6 @@ class Recognition(object):
 
                 return pool3
 
-
     def bilstm(self, input_feature, seq_len):
         with tf.variable_scope("recog/rnn"):
             lstm_fw_cell = rnn.LSTMCell(self.rnn_hidden_num)
@@ -55,9 +52,7 @@ class Recognition(object):
         cnn_feature = self.cnn(rois) # N * 1 * W * C
         print("cnn_feature:", cnn_feature )
 
-        # cnn_feature = tf.reshape(cnn_feature, [nums, -1, 256]) # squeeze B x W x C
         cnn_feature = tf.squeeze(cnn_feature, axis=1) # N * W * C
-        # reshape_cnn_feature = tf.transpose(cnn_feature, (1, 0, 2))
         reshape_cnn_feature = cnn_feature
         print("final cnn: ", reshape_cnn_feature.shape)
 
