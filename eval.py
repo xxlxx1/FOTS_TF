@@ -295,7 +295,7 @@ def main(argv=None):
             for im_fn in im_fn_list:
                 im = cv2.imread(im_fn)[:, :, ::-1]
                 start_time = time.time()
-                im_resized, (ratio_h, ratio_w) = resize_image(im)
+                im_resized, (ratio_h, ratio_w) = resize_image(im, max_side_len=1024)
                 # im_resized_d, (ratio_h_d, ratio_w_d) = resize_image_detection(im)
 
                 timer = {'net': 0, 'restore': 0, 'nms': 0}
@@ -395,4 +395,4 @@ def main(argv=None):
 if __name__ == '__main__':
     tf.app.run()
 
-# python eval.py --gpu_list=7 --test_data_path=/data/xlxia/dataset/detect_img/fix_data/test/all/ --checkpoint_path=checkpoints/ --output_dir=output/
+# python eval.py --gpu_list=7 --test_data_path=/data/xlxia/code/psenet/pic/book --checkpoint_path=checkpoints/ --output_dir=output_book/ --use_vacab=False --no_write_images=False
