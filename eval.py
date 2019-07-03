@@ -217,9 +217,9 @@ def main(argv=None):
                 im = cv2.imread(im_fn)[:, :, ::-1]
                 start_time = time.time()
                 im_resized, (ratio_h, ratio_w) = resize_image(im, max_side_len=1024)
-                # im_resized_d, (ratio_h_d, ratio_w_d) = resize_image_detection(im)
 
                 timer = {'rec_net':0, 'all_net': 0, 'get_det_socremap': 0, 'nms': 0}
+                # 检测部分
                 start = time.time()
                 score, geometry = sess.run([f_score, f_geometry], feed_dict={input_images: [im_resized]})
                 timer["get_det_socremap"] = time.time() - start
@@ -227,18 +227,17 @@ def main(argv=None):
 
                 # save to file
                 if boxes is not None and boxes.shape[0] != 0:
-                    res_file = os.path.join(
-                        FLAGS.output_dir,
-                        'res_' + '{}.txt'.format(
-                            os.path.basename(im_fn).split('.')[0]))
+                    res_file = os.path.join(FLAGS.output_dir,'res_' + '{}.txt'.format(os.path.basename(im_fn).split('.')[0]))
 
                     input_roi_boxes = boxes[:, :8].reshape(-1, 8)
-
                     boxes_masks = [0] * input_roi_boxes.shape[0]
-                    print("input_roi_boxes shape:", input_roi_boxes.shape)
+                    print("input_roi_boxes shape:", input_roi_boxes.shape)  # shape：框的个数 * 8
+
                     transform_matrixes, box_widths = get_project_matrix_and_width(input_roi_boxes)
+                    print("max box width", box_widths)
+
+                    # 识别
                     rec_start = time.time()
-                    # Run end to end
                     recog_decode = sess.run(dense_decode, feed_dict={input_images: [im_resized],
                         input_transform_matrix: transform_matrixes, input_box_mask[0]: boxes_masks, input_box_widths: box_widths})
                     timer['rec_net'] = time.time() - rec_start
@@ -249,9 +248,6 @@ def main(argv=None):
                     boxes[:, :, 0] /= ratio_w
                     boxes[:, :, 1] /= ratio_h
 
-                    # print "recognition result: "
-                    # for pred in recog_decode:
-                       # print ground_truth_to_word(pred)
                     if recog_decode.shape[0] != boxes.shape[0]:
                         print("detection and recognition result are not equal!")
                         exit(-1)
@@ -267,7 +263,7 @@ def main(argv=None):
                                 fix_result = bktree_search(bk_tree, recognition_result.upper())
                                 if len(fix_result) != 0:
                                     recognition_result = fix_result[0][1]
-			     
+
                             f.write('{},{},{},{},{},{},{},{},{}\r\n'.format(
                                 box[0, 0], box[0, 1], box[1, 0], box[1, 1], box[2, 0], box[2, 1], box[3, 0], box[3, 1], recognition_result))
 
@@ -288,15 +284,14 @@ def main(argv=None):
                     im_txt = None
                     f.close()
 
-                print('{} : get_det_socremap {:.0f}ms, nms {:.0f}ms, rec_net {:.0f}ms, all_net {:.0f}ms'.format(
-                    im_fn, timer['get_det_socremap']*1000, timer['nms']*1000, timer['rec_net']*1000, timer['all_net']*1000))
+                print('{} : get_det_socremap {:.0f}ms, nms {:.0f}ms, rec_net {:.0f}ms, all_net {:.5f}s'.format(
+                    im_fn, timer['get_det_socremap']*1000, timer['nms']*1000, timer['rec_net']*1000, timer['all_net']))
 
                 duration = time.time() - start_time
-                print('[timing] {}'.format(duration))
+                print('[timing] {:.5f}s \n'.format(duration))
 
                 if not FLAGS.no_write_images:
                     img_path = os.path.join(FLAGS.output_dir, os.path.basename(im_fn))
-                    # cv2.imwrite(img_path, im[:, :, ::-1])
                     if im_txt is not None:
                         cv2.imwrite(img_path, im_txt)
 
