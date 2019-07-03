@@ -2,7 +2,7 @@
 ### Introduction
 This is an implementation of [FOTS: Fast Oriented Text Spotting with a Unified Network](https://arxiv.org/pdf/1801.01671.pdf)
 ### Install
-+ Python2
++ Python3
 + tensorflow
 + OpenCV
 ### Model

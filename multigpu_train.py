@@ -22,8 +22,6 @@ from module import Backbone_branch, Recognition_branch, RoI_rotate
 
 FLAGS = tf.app.flags.FLAGS
 
-# gpus = list(range(len(FLAGS.gpu_list.split(','))))
-
 detect_part = Backbone_branch.Backbone(is_training=True)
 roi_rotate_part = RoI_rotate.RoIRotate()
 recognize_part = Recognition_branch.Recognition(is_training=True) 
@@ -171,23 +169,12 @@ def main(argv=None):
                 start = time.time()
                 print('Step {:06d}, detect_loss {:.4f}, recognize_loss {:.4f}, total loss {:.4f}, {:.2f} seconds/step, {:.2f} examples/second'.format(
                     step, dl, rl, tl, avg_time_per_step, avg_examples_per_second))
-                
-                """
-                print "recognition results: "
-                for pred in result:
-                    print icdar.ground_truth_to_word(pred)
-                """
+
             
             if step % FLAGS.save_checkpoint_steps == 0:
                 saver.save(sess, FLAGS.checkpoint_path + 'model.ckpt', global_step=global_step)
 
             if step % FLAGS.save_summary_steps == 0:
-                """
-                _, tl, summary_str = sess.run([train_op, total_loss, summary_op], feed_dict={input_images: data[0],
-                                                                                             input_score_maps: data[2],
-                                                                                             input_geo_maps: data[3],
-                                                                                             input_training_masks: data[4]})
-                """
                 dl, rl, tl, _, summary_str = sess.run([d_loss, r_loss, total_loss, train_op, summary_op], feed_dict=inp_dict)
                 
                 summary_writer.add_summary(summary_str, global_step=step)
