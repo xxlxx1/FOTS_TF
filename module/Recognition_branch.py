@@ -49,15 +49,11 @@ class Recognition(object):
         '''
         num_rois = tf.shape(rois)[0]
 
-        cnn_feature = self.cnn(rois) # N * 1 * W * C
-        print("cnn_feature:", cnn_feature )
-
+        cnn_feature = self.cnn(rois) # N * 1 * W * C   shape=(?, 1, ?, 256)
         cnn_feature = tf.squeeze(cnn_feature, axis=1) # N * W * C
-        reshape_cnn_feature = cnn_feature
-        print("final cnn: ", reshape_cnn_feature.shape)
+        reshape_cnn_feature = cnn_feature # (?, ?, 256)
 
-        lstm_output = self.bilstm(reshape_cnn_feature, seq_len) # N * T * 2H
-        print("lstm_output: ", lstm_output)
+        lstm_output = self.bilstm(reshape_cnn_feature, seq_len) # N * T * 2H shape=(?, ?, 512)
 
         logits = tf.reshape(lstm_output, [-1, self.rnn_hidden_num * 2]) # (N * T) * 2H
 

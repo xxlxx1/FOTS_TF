@@ -189,13 +189,11 @@ def main(argv=None):
     with tf.get_default_graph().as_default():
         input_images = tf.placeholder(tf.float32, shape=[None, None, None, 3], name='input_images')
         input_transform_matrix = tf.placeholder(tf.float32, shape=[None, 6], name='input_transform_matrix')
-        # input_box_mask = tf.placeholder(tf.int32, shape=[None], name='input_box_mask')
+
         input_box_mask = []
         input_box_mask.append(tf.placeholder(tf.int32, shape=[None], name='input_box_masks_0'))
         input_box_widths = tf.placeholder(tf.int32, shape=[None], name='input_box_widths')
-        # input_box_nums = tf.placeholder(tf.int32, name='input_box_nums')
-        # input_seq_len = tf.placeholder(tf.int32, shape=[None], name='input_seq_len')
-        # input_seq_len = input_box_widths[tf.argmax(input_box_widths, 0)] * tf.ones_like(input_box_widths)
+
         global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
 
         shared_feature, f_score, f_geometry = detect_part.model(input_images)
@@ -218,7 +216,7 @@ def main(argv=None):
                 start_time = time.time()
                 im_resized, (ratio_h, ratio_w) = resize_image(im, max_side_len=1024)
 
-                timer = {'rec_net':0, 'all_net': 0, 'get_det_socremap': 0, 'nms': 0}
+                timer = {'rec_net':0, 'all_net': 0, 'get_det_socremap': 0, 'nms': 0, 'roi_net':0 }
                 # 检测部分
                 start = time.time()
                 score, geometry = sess.run([f_score, f_geometry], feed_dict={input_images: [im_resized]})
@@ -230,17 +228,20 @@ def main(argv=None):
                     res_file = os.path.join(FLAGS.output_dir,'res_' + '{}.txt'.format(os.path.basename(im_fn).split('.')[0]))
 
                     input_roi_boxes = boxes[:, :8].reshape(-1, 8)
-                    boxes_masks = [0] * input_roi_boxes.shape[0]
-                    print("input_roi_boxes shape:", input_roi_boxes.shape)  # shape：框的个数 * 8
+                    boxes_masks = [0] * input_roi_boxes.shape[0] # shape：框的个数 * 8
 
                     transform_matrixes, box_widths = get_project_matrix_and_width(input_roi_boxes)
-                    # print("max box width", box_widths)
 
                     # 识别
                     rec_start = time.time()
-                    recog_decode = sess.run(dense_decode, feed_dict={input_images: [im_resized],
-                        input_transform_matrix: transform_matrixes, input_box_mask[0]: boxes_masks, input_box_widths: box_widths})
-                    timer['rec_net'] = time.time() - rec_start
+                    pad_rois_reuslt = sess.run(pad_rois, feed_dict={input_images: [im_resized],
+                                                                    input_transform_matrix: transform_matrixes,
+                                                                    input_box_mask[0]: boxes_masks,
+                                                                    input_box_widths: box_widths})
+                    timer['roi_net'] = time.time() - rec_start
+                    time1 = time.time()
+                    recog_decode = sess.run(dense_decode, feed_dict={pad_rois:pad_rois_reuslt, input_box_widths: box_widths})
+                    timer['rec_net'] = time.time() - time1
                     timer['all_net'] = time.time() - start
                     
                     # Preparing for draw boxes
@@ -284,8 +285,8 @@ def main(argv=None):
                     im_txt = None
                     f.close()
 
-                print('{} : get_det_socremap {:.0f}ms, nms {:.0f}ms, rec_net {:.0f}ms, all_net {:.5f}s'.format(
-                    im_fn, timer['get_det_socremap']*1000, timer['nms']*1000, timer['rec_net']*1000, timer['all_net']))
+                print('{} : get_det_socremap {:.0f}ms, nms {:.0f}ms, roi_net {:.0f}ms, rec_net {:.0f}ms, all_net {:.5f}s'.format(
+                    im_fn, timer['get_det_socremap']*1000, timer['nms']*1000, timer['roi_net']*1000, timer['rec_net']*1000, timer['all_net']))
 
                 duration = time.time() - start_time
                 print('[timing] {:.5f}s \n'.format(duration))
