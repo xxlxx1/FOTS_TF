@@ -146,11 +146,19 @@ if __name__ == "__main__":
     print("cost %.3f ms" %((time.time() - start_time) * 1000))
 
     start_time = time.time()
+    print(tree.query("AFTEk", 3))
+    print("cost %.3f ms" %((time.time() - start_time) * 1000))
+
+    start_time = time.time()
     print(tree.query("scandal", 2))
     print("cost %.3f ms" %((time.time() - start_time) * 1000))
 
     start_time = time.time()
-    print(tree.query("backlash", 1))
+    print(tree.query("STEPp", 1))
+    print("cost %.3f ms" %((time.time() - start_time) * 1000))
+
+    start_time = time.time()
+    print(tree.query("STEPp", 1))
     print("cost %.3f ms" %((time.time() - start_time) * 1000))
     
 #     dist = 1
