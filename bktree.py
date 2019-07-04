@@ -138,8 +138,12 @@ def timeof(fn, *args):
 
 if __name__ == "__main__":
 
-    tree = BKTree(levenshtein, dict_words('/usr/share/dict/american-english-large'))
-    print(tree.query("ricoshet", 2))
+    # tree = BKTree(levenshtein, dict_words('/usr/share/dict/american-english-large'))
+    tree = BKTree(levenshtein, dict_words('vocab.txt'))
+    import time
+    start_time = time.time()
+    print(tree.query("AFTEk", 3))
+    print("cost %.3f ms" %((time.time() - start_time) * 1000))
     
 #     dist = 1
 #     for i in ["book", "cat", "backlash", "scandal"]:
